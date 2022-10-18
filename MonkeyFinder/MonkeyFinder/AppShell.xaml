@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MonkeyFinder.AppShell"
              xmlns:view="clr-namespace:MonkeyFinder.View"
+             xmlns:viewModel="clr-namespace:MonkeyFinder.ViewModel"
              FlyoutBehavior="Disabled">
 
 
@@ -12,7 +13,7 @@
             <Style x:Key="BaseStyle" TargetType="Element">
                 <Setter Property="Shell.BackgroundColor" Value="{StaticResource Primary}" />
                 <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource Primary}, Default=White}" />
-                <Setter Property="Shell.TitleColor" Value="White" />
+                <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light=#FFFFFF, Dark=#000000}" />
                 <Setter Property="Shell.DisabledColor" Value="#B4FFFFFF" />
                 <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Dark=#95FFFFFF, Light=#95000000}" />
                 <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Dark={StaticResource DarkBackground}, Light={StaticResource LightBackground}}" />
@@ -27,9 +28,14 @@
 
 
     <ShellContent
-        Shell.NavBarIsVisible="true"
+        Shell.NavBarIsVisible="True"
         Title="Monkeys"
         ContentTemplate="{DataTemplate view:MainPage}"
         Route="MainPage" />
+
+    <!--<Shell.ToolbarItems>
+        <ToolbarItem Text="Clear" Order="Primary" Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:MonkeysViewModel}}, Path=ClearMonkeysCommand}" />
+        <ToolbarItem Text="Secondary" Order="Secondary"/>
+    </Shell.ToolbarItems>-->
 
 </Shell>

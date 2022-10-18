@@ -1,8 +1,109 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:model="clr-namespace:MonkeyFinder.Model"
+             xmlns:viewModel="clr-namespace:MonkeyFinder.ViewModel"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             x:DataType="viewModel:MonkeysViewModel"
+             Title="{Binding Title}"
+             ios:Page.UseSafeArea="True"
              x:Class="MonkeyFinder.View.MainPage">
-    <VerticalStackLayout>
-        <Button Text="Click Me"/>
-    </VerticalStackLayout>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Clear" Command="{Binding ClearMonkeysCommand}" Order="Secondary"/>
+    </ContentPage.ToolbarItems>
+    
+    <Grid ColumnDefinitions="*,*" ColumnSpacing="5" RowDefinitions="*, Auto">
+        <RefreshView Grid.ColumnSpan="2" Command="{Binding GetMonkeysCommand}" IsRefreshing="{Binding IsRefreshing}" IsEnabled="{Binding IsNotBusy}">
+            <CollectionView BackgroundColor="Transparent" Grid.ColumnSpan="2" ItemsSource="{Binding Monkeys}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Monkey">
+                        <Grid Padding="10">
+                            <Frame HeightRequest="125" Padding="0" Style="{StaticResource CardView}">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer CommandParameter="{Binding .}" 
+                                                          Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:MonkeysViewModel}}, Path=GoToDetailsCommand}" />
+                                </Frame.GestureRecognizers>
+                                <Grid Padding="0" ColumnDefinitions="125, *">
+                                    <Image Aspect="Fill" Source="{Binding Image}" HeightRequest="125" WidthRequest="125"/>
+
+                                    <VerticalStackLayout Grid.Column="1" Padding="10" VerticalOptions="Start">
+                                        <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"/>
+                                        <Label Text="{Binding Location}" Style="{StaticResource MicroLabel}"/>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Frame>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <StackLayout Padding="100" VerticalOptions="Center" HorizontalOptions="Center" IsVisible="{Binding IsNotBusy}">
+                        <Image HorizontalOptions="Center" VerticalOptions="Center" Source="nodata.png" />
+                        <Label Text="Your list is currently empty!" Style="{StaticResource BaseLabel}" Margin="5"/>
+                    </StackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemsLayout>
+                    <!--<LinearItemsLayout Orientation="Horizontal"/>-->
+                    <!-- To display the full card or just blocks, change this for example Phone=1 -->
+                    <GridItemsLayout Orientation="Vertical"
+                                     Span="{OnIdiom TV=1, Desktop=1, Default=1, Tablet=2, Phone=3}"/>
+                </CollectionView.ItemsLayout>
+            </CollectionView>
+        </RefreshView>
+
+        <Button Text="Get Monkeys" 
+                Grid.Row="1" 
+                Margin="5" 
+                Command="{Binding GetMonkeysCommand}" 
+                IsEnabled="{Binding IsNotBusy}" 
+                Style="{StaticResource ButtonOutline}"/>        
+        
+        <Button Text="Find Closest" 
+                Grid.Row="1" 
+                Grid.Column="1" Margin="5" 
+                Command="{Binding GetClosestMonkeyCommand}" 
+                IsEnabled="{Binding IsNotBusy}" 
+                Style="{StaticResource ButtonOutline}"/>        
+
+        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                           IsRunning="{Binding IsBusy}" 
+                           HorizontalOptions="CenterAndExpand" 
+                           VerticalOptions="CenterAndExpand"
+                           Grid.RowSpan="2" 
+                           Grid.ColumnSpan="2" 
+                           ZIndex="2"/>
+
+    </Grid>
+
+    <!--<CollectionView>
+        <CollectionView.ItemsSource>
+            <x:Array Type="{x:Type model:Monkey}">
+                <model:Monkey 
+                    Name="Baboon"
+                    Image="https://raw.githubusercontent.com/jamesmontemagno/app-monkeys/master/baboon.jpg"
+                    Location="Africa and Asia" />
+                <model:Monkey
+                    Name="Capuchin Monkey"
+                    Image="https://raw.githubusercontent.com/jamesmontemagno/app-monkeys/master/capuchin.jpg"
+                    Location="Central and South America" />
+                <model:Monkey
+                    Name="Red-Shanked Douc"
+                    Image="https://raw.githubusercontent.com/jamesmontemagno/app-monkeys/master/douc.jpg"
+                    Location="Vietnam" />
+            </x:Array>
+        </CollectionView.ItemsSource>
+
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="model:Monkey">
+                <HorizontalStackLayout Padding="5">
+                    <Image Source="{Binding Image}" HeightRequest="100" WidthRequest="100" Aspect="AspectFill"/>
+                    <VerticalStackLayout Padding="10" Spacing="5" VerticalOptions="Start">
+                        <Label Text="{Binding Name}" FontSize="20"/>
+                        <Label Text="{Binding Location}" FontSize="10"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>-->
 </ContentPage>
